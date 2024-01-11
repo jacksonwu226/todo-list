@@ -1,3 +1,5 @@
+import {format} from 'date-fns';
+
 class Task{
     constructor(title, description, priority, dueDate = 'No due date'){
         this.title = title;
@@ -27,7 +29,16 @@ class Task{
         return this._dueDate;
     }
     set dueDate(newDate){
-        this._dueDate = newDate;
+        this._dueDate = this.formatDate(newDate);
+    }
+    formatDate(date){
+        if (date === 'No due date'){
+            return date;
+        }
+        else{
+            const dateSplit = date.split('-');
+            return format(new Date(dateSplit[0], dateSplit[1], dateSplit[2],), 'MM/dd/yyyy');
+        }
     }
 }
 
