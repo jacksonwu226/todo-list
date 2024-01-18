@@ -23,7 +23,7 @@ class TodoList{
         return this._upcoming;
     }
     contains(projectToCheck){
-        return this._projects.some((project)=> projectToCheck === projectToCheck);
+        return this._projects.some((project)=> project === projectToCheck);
     }
     getProject(projectName){
         return this._projects.find((project) => project.name === projectName);
