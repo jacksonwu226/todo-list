@@ -40,6 +40,8 @@ class TodoList{
     }
     updateToday(){
         this._today.tasks = [];
+        const todayInboxTask = this.inbox.getTodayTasks();
+        this._today.appendTasks(todayInboxTask);
         this._projects.forEach((project)=>{
             const todaysTask = project.getTodayTasks();
             this._today.appendTasks(todaysTask);
@@ -47,6 +49,8 @@ class TodoList{
     }
     updateUpcoming(){
         this._upcoming.tasks = [];
+        const upcomingInboxTask = this.inbox.getUpcomingTasks();
+        this._upcoming.appendTasks(upcomingInboxTask);
         this._projects.forEach((project)=>{
             const upcomingTasks = project.getUpcomingTasks();
             this._upcoming.appendTasks(upcomingTasks);
