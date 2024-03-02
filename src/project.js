@@ -1,4 +1,4 @@
-import { isThisWeek, isToday, toDate, format } from "date-fns";
+import { isThisWeek, isToday, toDate, addDays, startOfDay, getDay } from "date-fns";
 
 class Project{
     constructor(name){
@@ -35,8 +35,10 @@ class Project{
         })
     }
     getUpcomingTasks(){
+        const today = startOfDay(new Date());
+        const day = getDay(today);
         return this._tasks.filter((task) => {
-            return isThisWeek(toDate(task.dueDate));
+            return isThisWeek(toDate(task.dueDate), {weekStartsOn: day});
         })
     }
 }

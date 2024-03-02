@@ -28,7 +28,6 @@ export default class UI{
       sidebar.appendChild(sectionElement);
     });
 
-    sectionElement.textContent = 0;
 
     this.body.appendChild(sidebar);
   }
@@ -75,11 +74,11 @@ export default class UI{
     return mainContentArea;
   }
   createTestProjects() {
-    const today = '2024-01-27'; // 'YYYY-MM-DD' format
+    const today = '2024-01-31'; // 'YYYY-MM-DD' format
 
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
-    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-01');
+    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-08');
 
     console.log(task1);
     this.todoList.inbox.addTask(task1);
