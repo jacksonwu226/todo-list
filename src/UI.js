@@ -8,27 +8,38 @@ export default class UI{
     this.body = document.body;
     this.content = this.createContent();
     this.todoList = new TodoList();
+    this.selectedSection = this.todoList.inbox;
     this.createTemplate();
-    this.renderSidebar();
     this.createTestProjects();
+
+    this.render();
     }
   createTemplate(){
     this.content.innerHTML = `
       <div class='sidebar'>
+        <div class='sidebar-section-container'>
+        </div>
       </div>  
       <div class='section-content'>
       </div>  
     `
     }
   // renders the side bar of the page, should contain all projects
+  render(){
+    this.renderSidebar();
+    this.renderContent();
+  }
   renderSidebar() {
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.querySelector('.sidebar-section-container');
     this.clearContent(sidebar);
     const sections = [this.todoList.inbox, this.todoList.today, this.todoList.upcoming, ...this.todoList.projects];
     sections.forEach((section) => {
       const sectionElement = document.createElement('button');
       sectionElement.textContent = section.name;
       sectionElement.classList.add('sidebar-section');
+      if(section === this.selectedSection){
+        sectionElement.classList.add('active-section');
+      }
       sectionElement.addEventListener('click', () => {
         this.handleSidebarClick(section);
       });
@@ -45,13 +56,18 @@ export default class UI{
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
     }
-    this.renderContent(section);
+    console.log(section)
+
+    this.selectedSection = section;
+    this.render();
   }
   // renders the content page
-  renderContent(section) {
+  renderContent() {
     // Assuming there's a main content div with a specific class or id in your HTML
+    const section = this.selectedSection;
+    console.log(section)
+
     const mainContentArea = document.querySelector('.section-content');
-  
     // Clear the current content
     this.clearContent(mainContentArea);
     const sectionTitle = document.createElement('h2');
@@ -139,7 +155,6 @@ export default class UI{
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
     const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-08');
 
-    console.log(task1);
     this.todoList.inbox.addTask(task1);
     this.todoList.inbox.addTask(task2);
     this.todoList.inbox.addTask(task3);
