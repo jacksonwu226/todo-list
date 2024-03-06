@@ -6,18 +6,25 @@ import {format} from 'date-fns'
 export default class UI{
   constructor() {
     this.body = document.body;
+    this.content = this.createContent();
     this.todoList = new TodoList();
-    this.createTestProjects();
-
+    this.createTemplate();
     this.renderSidebar();
-  }
-
+    this.createTestProjects();
+    }
+  createTemplate(){
+    this.content.innerHTML = `
+      <div class='sidebar'>
+      </div>  
+      <div class='section-content'>
+      </div>  
+    `
+    }
+  // renders the side bar of the page, should contain all projects
   renderSidebar() {
-    const sidebar = document.createElement('div');
-    sidebar.classList.add('sidebar');
-
+    const sidebar = document.querySelector('.sidebar');
+    this.clearContent(sidebar);
     const sections = [this.todoList.inbox, this.todoList.today, this.todoList.upcoming, ...this.todoList.projects];
-
     sections.forEach((section) => {
       const sectionElement = document.createElement('button');
       sectionElement.textContent = section.name;
@@ -27,10 +34,10 @@ export default class UI{
       });
       sidebar.appendChild(sectionElement);
     });
-
-
-    this.body.appendChild(sidebar);
+    const form = this.createNewProjectForm();
+    sidebar.appendChild(form);
   }
+  // Handles what happens when a section is clicked
   handleSidebarClick(section){
     if(section === this.todoList.today){
       this.todoList.updateToday();
@@ -40,38 +47,90 @@ export default class UI{
     }
     this.renderContent(section);
   }
-  handleCreateProject(){
-    
-  }
+  // renders the content page
   renderContent(section) {
     // Assuming there's a main content div with a specific class or id in your HTML
-    const mainContentArea = document.querySelector('.main-content') || this.createMainContentArea();
+    const mainContentArea = document.querySelector('.section-content');
   
     // Clear the current content
-    mainContentArea.innerHTML = '';
-  
-    // Example of how you might render tasks for the selected section
+    this.clearContent(mainContentArea);
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
     mainContentArea.appendChild(sectionTitle);
   
     const tasksList = document.createElement('ul');
     section.tasks.forEach(task => {
-      console.log(task);
-      const taskItem = document.createElement('li');
-      taskItem.textContent = `${task.title} - Due: ${format(task.dueDate, 'PP')}`;
+      const taskItem = this.createTaskElementUI(task, section);
       tasksList.appendChild(taskItem);
     });
-    
-  
     mainContentArea.appendChild(tasksList);
   }
-  
-  createMainContentArea() {
-    const mainContentArea = document.createElement('div');
-    mainContentArea.classList.add('main-content');
-    this.body.appendChild(mainContentArea);
-    return mainContentArea;
+  createTaskElementUI(task, section){
+    const taskUI = document.createElement('li');
+    taskUI.textContent = `${task.title} - Due: ${format(task.dueDate, 'PP')}`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'X';
+    deleteBtn.classList.add('delete-task-btn');
+    deleteBtn.addEventListener("click", () => this.deleteTask(task, taskUI, section));
+    taskUI.appendChild(deleteBtn);
+    return taskUI;
+  }
+  deleteTask(task,taskUI,section){
+    taskUI.remove();
+    section.removeTask(task);
+  }
+  createContent() {
+    const content = document.createElement('div');
+    content.classList.add('content');
+    this.body.appendChild(content);
+    return content;
+  }
+  clearContent(element) {
+    while (element.firstChild){
+      element.removeChild(element.firstChild);
+    }
+  }
+  createNewProjectForm(){
+    const form = document.createElement('form');
+    form.setAttribute('action', '');
+    form.dataset.newProjectForm = true;
+
+    const input = document.createElement('input');
+    input.setAttribute('type','text');
+    input.setAttribute('class', 'new project');
+    input.dataset.newProjectInput = true;
+    input.setAttribute('placeholder', 'new project name');
+    input.setAttribute('aria-label', 'new projecct name');
+
+    // create button ele
+    const button = document.createElement('button');
+    button.setAttribute('class', 'btn create');
+    button.setAttribute('aria-label', 'create new project');
+    button.textContent = '+';
+
+    form.appendChild(input);
+    form.appendChild(button);
+    this.newProjectForm = form;
+    this.newProjectInput = input;
+
+    this.newProjectForm.addEventListener('submit', (e) => this.newProjectSubmission(e));
+
+    return form;
+  }
+
+  newProjectSubmission(event){
+    event.preventDefault()
+    const projectName = this.newProjectInput.value;
+
+    if(projectName == null || projectName ==='') return;
+    this.createProject(projectName);
+    this.renderSidebar();
+    this.newProjectInput.value = '';
+  }
+  createProject(name){
+    const newProject = new Project(name);
+    this.todoList.addProject(newProject);
   }
   createTestProjects() {
     const today = '2024-01-31'; // 'YYYY-MM-DD' format

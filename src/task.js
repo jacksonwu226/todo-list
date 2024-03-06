@@ -37,7 +37,6 @@ class Task{
         }
         else{
             const dateSplit = date.split('-');
-            console.log(dateSplit);
             return format(new Date(dateSplit[0], dateSplit[1], dateSplit[2]), 'MM/dd/yyyy');
         }
     }
