@@ -17,6 +17,9 @@ class Project{
     get tasks(){
         return this._tasks;
     }
+    get length(){
+        return this._tasks.length;
+    }
     addTask(newTask){
         this._tasks.push(newTask);
     }

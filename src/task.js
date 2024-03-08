@@ -6,6 +6,7 @@ class Task{
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
+        this.isComplete = false;
     }
     get title() {
         return this._title;
@@ -30,6 +31,12 @@ class Task{
     }
     set dueDate(newDate){
         this._dueDate = this.formatDate(newDate);
+    }
+    get isComplete(){
+        return this._isComplete;
+    }
+    set isComplete(isComplete){
+        this._isComplete = isComplete;
     }
     formatDate(date){
         if (date === 'No due date'){
