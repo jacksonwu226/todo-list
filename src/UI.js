@@ -50,16 +50,16 @@ export default class UI{
   }
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
+    this.selectedSection = section;
     if(section === this.todoList.today){
       this.todoList.updateToday();
     }
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
     }
-    console.log(section)
-
-    this.selectedSection = section;
-    this.render();
+    else{
+      this.render();
+    }
   }
   // renders the content page
   renderContent() {
@@ -149,11 +149,11 @@ export default class UI{
     this.todoList.addProject(newProject);
   }
   createTestProjects() {
-    const today = '2024-01-31'; // 'YYYY-MM-DD' format
+    const today = '2024-02-11'; // 'YYYY-MM-DD' format
 
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
-    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-08');
+    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-12');
 
     this.todoList.inbox.addTask(task1);
     this.todoList.inbox.addTask(task2);
