@@ -1,5 +1,5 @@
 import Project from './project.js';
-
+import Upcoming from './upcoming';
 class TodoList{
     constructor() {
         this._projects = [];
@@ -39,18 +39,19 @@ class TodoList{
         }
     }
     updateToday(){
-        this._today.tasks = [];
+        this._today.clearTasks();
         const todayInboxTask = this.inbox.getTodayTasks();
-        this._today.appendTasks(todayInboxTask);
+        this._today.appendTasks(todayInboxTask, this.inbox);
         this._projects.forEach((project)=>{
+            console.log(project);
             const todaysTask = project.getTodayTasks();
             this._today.appendTasks(todaysTask, project);
         })
     }
     updateUpcoming(){
-        this._upcoming.tasks = [];
+        this._upcoming.clearTasks();
         const upcomingInboxTask = this.inbox.getUpcomingTasks();
-        this._upcoming.appendTasks(upcomingInboxTask);
+        this._upcoming.appendTasks(upcomingInboxTask, this.inbox);
         this._projects.forEach((project)=>{
             const upcomingTasks = project.getUpcomingTasks();
             this._upcoming.appendTasks(upcomingTasks, project);

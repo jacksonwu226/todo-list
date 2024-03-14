@@ -1,4 +1,4 @@
-import Project from './project.js'
+import Task from "./task";
 
 class Upcoming {
   constructor(name = 'Upcoming'){
@@ -16,6 +16,9 @@ class Upcoming {
   }
   get taskContainer(){
       return this._taskContainer;
+  }
+  clearTasks(){
+    this._taskContainer = [];
   }
   addTask(newTask, fromSection){
     this._taskContainer.push({task: newTask, section: fromSection});

@@ -51,11 +51,14 @@ export default class UI{
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
     this.selectedSection = section;
+
     if(section === this.todoList.today){
       this.todoList.updateToday();
+      this.renderContentUpcoming();
     }
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
+      this.renderContentUpcoming();
     }
     else{
       this.render();
@@ -65,7 +68,6 @@ export default class UI{
   renderContent() {
     // Assuming there's a main content div with a specific class or id in your HTML
     const section = this.selectedSection;
-    console.log(section)
 
     const mainContentArea = document.querySelector('.section-content');
     // Clear the current content
@@ -78,6 +80,23 @@ export default class UI{
     section.tasks.forEach(task => {
       const taskItem = this.createTaskElementUI(task, section);
       tasksList.appendChild(taskItem);
+    });
+    mainContentArea.appendChild(tasksList);
+  }
+  renderContentUpcoming(){
+    const section = this.selectedSection;
+    console.log(section);
+    const mainContentArea = document.querySelector('.section-content');
+    this.clearContent(mainContentArea);
+
+    const sectionTitle = document.createElement('h2');
+    sectionTitle.textContent = section.name;
+    mainContentArea.appendChild(sectionTitle);
+
+    const tasksList = document.createElement('ul');
+    section.taskContainer.forEach(taskInfo => {
+        const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
+        tasksList.appendChild(taskItem);
     });
     mainContentArea.appendChild(tasksList);
   }
@@ -149,11 +168,11 @@ export default class UI{
     this.todoList.addProject(newProject);
   }
   createTestProjects() {
-    const today = '2024-02-11'; // 'YYYY-MM-DD' format
+    const today = '2024-02-14'; // 'YYYY-MM-DD' format
 
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
-    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-12');
+    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-15');
 
     this.todoList.inbox.addTask(task1);
     this.todoList.inbox.addTask(task2);
