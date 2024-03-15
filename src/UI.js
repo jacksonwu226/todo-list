@@ -127,7 +127,7 @@ export default class UI{
     const taskCount = this.renderTaskCountUpcoming(section.taskContainer);
     
     mainContentArea.appendChild(taskCount);
-    const tasksList = document.createElement('ul');
+    const tasksList = document.createElement('task-container');
     section.taskContainer.forEach(taskInfo => {
         const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
         tasksList.appendChild(taskItem);
