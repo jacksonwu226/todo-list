@@ -29,6 +29,10 @@ export default class UI{
     this.renderSidebar();
     this.renderContent();
   }
+  renderUpcoming(){
+    this.renderSidebar();
+    this.renderContentUpcoming();
+  }
   renderSidebar() {
     const sidebar = document.querySelector('.sidebar-section-container');
     this.clearContent(sidebar);
@@ -91,13 +95,13 @@ export default class UI{
   renderContent() {
     // Assuming there's a main content div with a specific class or id in your HTML
     const section = this.selectedSection;
+
     const mainContentArea = document.querySelector('.section-content');
     // Clear the current content
     this.clearContent(mainContentArea);
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
     mainContentArea.appendChild(sectionTitle);
-
     const taskCount = this.renderTaskCount(section.tasks);
     mainContentArea.appendChild(taskCount);
     const taskContainer = this.renderTasks(section);
@@ -114,14 +118,15 @@ export default class UI{
   }
   renderContentUpcoming(){
     const section = this.selectedSection;
-    console.log(section);
     const mainContentArea = document.querySelector('.section-content');
     this.clearContent(mainContentArea);
 
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
     mainContentArea.appendChild(sectionTitle);
-
+    const taskCount = this.renderTaskCountUpcoming(section.taskContainer);
+    
+    mainContentArea.appendChild(taskCount);
     const tasksList = document.createElement('ul');
     section.taskContainer.forEach(taskInfo => {
         const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
@@ -156,15 +161,37 @@ export default class UI{
   renderTaskCount(tasks){
     const taskCount = document.createElement('p');
     taskCount.classList.add('task-counter');
+    console.log(tasks);
+
     const imcompleteTaskCount = tasks.filter(task => !task.isComplete).length
     const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
-    taskCount.innerText = `${tasks.length} ${taskString} remaining`;
+    taskCount.innerText = `${imcompleteTaskCount} ${taskString} remaining`;
+
+    return taskCount;
+  }
+  renderTaskCountUpcoming(taskContainer){
+    const taskCount = document.createElement('p');
+    taskCount.classList.add('task-counter');
+    const imcompleteTaskCount = taskContainer.filter( taskInfo => !taskInfo.task.isComplete).length
+    const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
+    taskCount.innerText = `${imcompleteTaskCount} ${taskString} remaining`;
 
     return taskCount;
   }
   deleteTask(task,section){
     section.removeTask(task);
-    this.renderContent();
+
+    if(this.selectedSection === this.todoList.today){
+      this.todoList.updateToday();
+      this.renderContentUpcoming();
+    }
+    else if(this.selectedSection === this.todoList.upcoming){
+      this.todoList.updateUpcoming();
+      this.renderContentUpcoming();
+    }
+    else{
+      this.render();
+    }
   }
   createContent() {
     const content = document.createElement('div');
@@ -253,6 +280,7 @@ export default class UI{
 
     if(projectName == null || projectName ==='') return;
     this.createProject(projectName);
+    this.selectedSection = this.todoList.projects[this.todoList.projects.length-1];
     this.render();
     this.newProjectInput.value = '';
   }
@@ -262,7 +290,7 @@ export default class UI{
   }
 
   createTestProjects() {
-    const today = '2024-03-15'; // 'YYYY-MM-DD' format
+    const today = '2024-03-16'; // 'YYYY-MM-DD' format
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
     const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-3-17');

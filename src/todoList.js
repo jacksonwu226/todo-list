@@ -44,8 +44,9 @@ class TodoList{
 
         this._today.appendTasks(todayInboxTask, this._inbox);
         this._projects.forEach((project)=>{
+            console.log(project);
             const todaysTask = project.getTodayTasks();
-            this._today.appendTasks(todaysTask, project);
+            this._today.appendTasks(todaysTask, project, project);
         })
     }
     updateUpcoming(){
@@ -54,7 +55,7 @@ class TodoList{
         this._upcoming.appendTasks(upcomingInboxTask, this._inbox);
         this._projects.forEach((project)=>{
             const upcomingTasks = project.getUpcomingTasks();
-            this._upcoming.appendTasks(upcomingTasks, project);
+            this._upcoming.appendTasks(upcomingTasks, project, project);
         })
     }
 }
