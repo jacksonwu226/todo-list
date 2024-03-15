@@ -1,7 +1,7 @@
 import Task from './task.js'
 import Project from './project.js'
 import TodoList from './todoList.js';
-import {format} from 'date-fns'
+import {format, toDate} from 'date-fns'
 
 export default class UI{
   constructor() {
@@ -73,14 +73,19 @@ export default class UI{
   }
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
+    this.selectedSection = section;
+
     if(section === this.todoList.today){
       this.todoList.updateToday();
+      this.renderContentUpcoming();
     }
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
+      this.renderContentUpcoming();
     }
-    this.selectedSection = section;
-    this.render();
+    else{
+      this.render();
+    }
   }
   // renders the content page
   renderContent() {
@@ -106,6 +111,23 @@ export default class UI{
       taskContainer.appendChild(taskItem);
     });
     return taskContainer;
+  }
+  renderContentUpcoming(){
+    const section = this.selectedSection;
+    console.log(section);
+    const mainContentArea = document.querySelector('.section-content');
+    this.clearContent(mainContentArea);
+
+    const sectionTitle = document.createElement('h2');
+    sectionTitle.textContent = section.name;
+    mainContentArea.appendChild(sectionTitle);
+
+    const tasksList = document.createElement('ul');
+    section.taskContainer.forEach(taskInfo => {
+        const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
+        tasksList.appendChild(taskItem);
+    });
+    mainContentArea.appendChild(tasksList);
   }
   createTaskElementUI(task, section){
     const taskUI = document.createElement('div');
@@ -196,14 +218,55 @@ export default class UI{
     const newProject = new Project(name);
     this.todoList.addProject(newProject);
   }
-  createTestProjects() {
-    const today = '2024-01-31'; // 'YYYY-MM-DD' format
 
+  createNewTaskForm(){
+    const form = document.createElement('form');
+    form.setAttribute('action', '');
+    form.dataset.newProjectForm = true;
+
+    const input = document.createElement('input');
+    input.setAttribute('type','text');
+    input.setAttribute('class', 'new project');
+    input.dataset.newProjectInput = true;
+    input.setAttribute('placeholder', 'new task name');
+    input.setAttribute('aria-label', 'new task name');
+
+    // create button ele
+    const button = document.createElement('button');
+    button.setAttribute('class', 'btn create');
+    button.setAttribute('aria-label', 'create new project');
+    button.textContent = '+';
+
+    form.appendChild(input);
+    form.appendChild(button);
+    this.newProjectForm = form;
+    this.newProjectInput = input;
+
+    this.newProjectForm.addEventListener('submit', (e) => this.newProjectSubmission(e));
+
+    return form;
+  }
+
+  newProjectSubmission(event){
+    event.preventDefault()
+    const projectName = this.newProjectInput.value;
+
+    if(projectName == null || projectName ==='') return;
+    this.createProject(projectName);
+    this.render();
+    this.newProjectInput.value = '';
+  }
+  createProject(name){
+    const newProject = new Project(name);
+    this.todoList.addProject(newProject);
+  }
+
+  createTestProjects() {
+    const today = '2024-03-15'; // 'YYYY-MM-DD' format
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
-    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-08');
+    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-3-17');
     task1.isComplete = true;
-    console.log(task1);
     this.todoList.inbox.addTask(task1);
     this.todoList.inbox.addTask(task2);
     this.todoList.inbox.addTask(task3);

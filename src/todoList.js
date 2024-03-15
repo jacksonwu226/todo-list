@@ -1,11 +1,11 @@
 import Project from './project.js';
-
+import Upcoming from './upcoming';
 class TodoList{
     constructor() {
         this._projects = [];
         this._inbox = new Project('Inbox');
-        this._today = new Project('Today');
-        this._upcoming = new Project('Upcoming');
+        this._today = new Upcoming('Today');
+        this._upcoming = new Upcoming('Upcoming');
     }
     get projects(){
         return this._projects;
@@ -39,21 +39,22 @@ class TodoList{
         }
     }
     updateToday(){
-        this._today.tasks = [];
-        const todayInboxTask = this.inbox.getTodayTasks();
-        this._today.appendTasks(todayInboxTask);
+        this._today.clearTasks();
+        const todayInboxTask = this._inbox.getTodayTasks();
+
+        this._today.appendTasks(todayInboxTask, this._inbox);
         this._projects.forEach((project)=>{
             const todaysTask = project.getTodayTasks();
-            this._today.appendTasks(todaysTask);
+            this._today.appendTasks(todaysTask, project);
         })
     }
     updateUpcoming(){
-        this._upcoming.tasks = [];
-        const upcomingInboxTask = this.inbox.getUpcomingTasks();
-        this._upcoming.appendTasks(upcomingInboxTask);
+        this._upcoming.clearTasks();
+        const upcomingInboxTask = this._inbox.getUpcomingTasks();
+        this._upcoming.appendTasks(upcomingInboxTask, this._inbox);
         this._projects.forEach((project)=>{
             const upcomingTasks = project.getUpcomingTasks();
-            this._upcoming.appendTasks(upcomingTasks);
+            this._upcoming.appendTasks(upcomingTasks, project);
         })
     }
 }
