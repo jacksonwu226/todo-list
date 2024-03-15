@@ -99,12 +99,17 @@ export default class UI{
     const mainContentArea = document.querySelector('.section-content');
     // Clear the current content
     this.clearContent(mainContentArea);
+    // header and body
+    const header = document.createElement('div');
+    header.classList.add('content-header');
+
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
-    mainContentArea.appendChild(sectionTitle);
     const taskCount = this.renderTaskCount(section.tasks);
-    mainContentArea.appendChild(taskCount);
+    header.appendChild(sectionTitle);
+    header.appendChild(taskCount);
     const taskContainer = this.renderTasks(section);
+    mainContentArea.appendChild(header);
     mainContentArea.appendChild(taskContainer);
   }
   renderTasks(section){
@@ -121,17 +126,21 @@ export default class UI{
     const mainContentArea = document.querySelector('.section-content');
     this.clearContent(mainContentArea);
 
+    const header = document.createElement('div');
+    header.classList.add('content-header');
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
-    mainContentArea.appendChild(sectionTitle);
     const taskCount = this.renderTaskCountUpcoming(section.taskContainer);
     
-    mainContentArea.appendChild(taskCount);
+    header.appendChild(sectionTitle);
+    header.appendChild(taskCount);
+
     const tasksList = document.createElement('task-container');
     section.taskContainer.forEach(taskInfo => {
         const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
         tasksList.appendChild(taskItem);
     });
+    mainContentArea.appendChild(header);
     mainContentArea.appendChild(tasksList);
   }
   createTaskElementUI(task, section){
