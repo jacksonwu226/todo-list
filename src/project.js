@@ -1,9 +1,11 @@
 import { isThisWeek, isToday, toDate, addDays, startOfDay, getDay } from "date-fns";
+import {v4 as uuidv4} from 'uuid'
 
 class Project{
     constructor(name){
         this._name = name;
         this._tasks = [];
+        this._id = uuidv4();
     }
     set name(newName){
         this._name = newName;
@@ -19,6 +21,9 @@ class Project{
     }
     get length(){
         return this._tasks.length;
+    }
+    get id(){
+        return this._id;
     }
     addTask(newTask){
         this._tasks.push(newTask);

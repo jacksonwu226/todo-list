@@ -34,19 +34,42 @@ export default class UI{
     this.clearContent(sidebar);
     const sections = [this.todoList.inbox, this.todoList.today, this.todoList.upcoming, ...this.todoList.projects];
     sections.forEach((section) => {
-      const sectionElement = document.createElement('button');
-      sectionElement.textContent = section.name;
-      sectionElement.classList.add('sidebar-section');
-      if(section === this.selectedSection){
-        sectionElement.classList.add('active-section');
-      }
-      sectionElement.addEventListener('click', () => {
-        this.handleSidebarClick(section);
-      });
+      const sectionElement = this.createSidebarElement(section);
       sidebar.appendChild(sectionElement);
     });
     const form = this.createNewProjectForm();
     sidebar.appendChild(form);
+  }
+  createSidebarElement(section){
+    const sectionElement = document.createElement('div');
+    sectionElement.textContent = section.name;
+    sectionElement.classList.add('sidebar-section');
+    if(section === this.selectedSection){
+      sectionElement.classList.add('active-section');
+    }
+    const sectionName = document.createElement('span');
+    sectionName.textContent = section.name;
+    sectionElement.addEventListener('click', () => {
+      this.handleSidebarClick(section);
+    });
+    const deleteBtn = document.createElement('button');
+    if(section.name === 'Inbox' || section.name === 'Upcoming' || section.name === 'Today')
+      return sectionElement;
+    deleteBtn.classList.add('section-delete-btn');
+    deleteBtn.innerText = 'X';
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.deleteProject(section);
+    })
+    sectionElement.appendChild(deleteBtn);
+    return sectionElement;
+  }
+  deleteProject(project){
+   if(project === this.selectedSection){
+      this.selectedSection = this.todoList.inbox;
+    }
+    this.todoList.deleteProject(project);
+    this.render();
   }
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
@@ -56,8 +79,6 @@ export default class UI{
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
     }
-    console.log(section)
-
     this.selectedSection = section;
     this.render();
   }
@@ -65,36 +86,63 @@ export default class UI{
   renderContent() {
     // Assuming there's a main content div with a specific class or id in your HTML
     const section = this.selectedSection;
-    console.log(section)
-
     const mainContentArea = document.querySelector('.section-content');
     // Clear the current content
     this.clearContent(mainContentArea);
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
     mainContentArea.appendChild(sectionTitle);
-  
-    const tasksList = document.createElement('ul');
+
+    const taskCount = this.renderTaskCount(section.tasks);
+    mainContentArea.appendChild(taskCount);
+    const taskContainer = this.renderTasks(section);
+    mainContentArea.appendChild(taskContainer);
+  }
+  renderTasks(section){
+    const taskContainer = document.createElement('div');
+    taskContainer.classList.add('task-container');
     section.tasks.forEach(task => {
       const taskItem = this.createTaskElementUI(task, section);
-      tasksList.appendChild(taskItem);
+      taskContainer.appendChild(taskItem);
     });
-    mainContentArea.appendChild(tasksList);
+    return taskContainer;
   }
   createTaskElementUI(task, section){
-    const taskUI = document.createElement('li');
-    taskUI.textContent = `${task.title} - Due: ${format(task.dueDate, 'PP')}`;
+    const taskUI = document.createElement('div');
+    taskUI.classList.add('task');
+    const checkBox = document.createElement('input');
+    checkBox.setAttribute('type', 'checkbox');
+    checkBox.id = task.id;
+    checkBox.checked = task.isComplete;
+    taskUI.appendChild(checkBox);
+    
+    const label = document.createElement('label');
+    label.setAttribute('for', task.id);
+    const span = document.createElement('span');
+    span.innerText = task.title;
+    span.classList.add('custom-checkbox');
+    label.appendChild(span);
+    taskUI.appendChild(label);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'X';
     deleteBtn.classList.add('delete-task-btn');
-    deleteBtn.addEventListener("click", () => this.deleteTask(task, taskUI, section));
+    deleteBtn.addEventListener("click", () => this.deleteTask(task, section));
     taskUI.appendChild(deleteBtn);
     return taskUI;
   }
-  deleteTask(task,taskUI,section){
-    taskUI.remove();
+  renderTaskCount(tasks){
+    const taskCount = document.createElement('p');
+    taskCount.classList.add('task-counter');
+    const imcompleteTaskCount = tasks.filter(task => !task.isComplete).length
+    const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
+    taskCount.innerText = `${tasks.length} ${taskString} remaining`;
+
+    return taskCount;
+  }
+  deleteTask(task,section){
     section.removeTask(task);
+    this.renderContent();
   }
   createContent() {
     const content = document.createElement('div');
@@ -141,7 +189,7 @@ export default class UI{
 
     if(projectName == null || projectName ==='') return;
     this.createProject(projectName);
-    this.renderSidebar();
+    this.render();
     this.newProjectInput.value = '';
   }
   createProject(name){
@@ -154,7 +202,8 @@ export default class UI{
     const task1 = new Task('Task 1', 'Description 1', 'High', today);
     const task2 = new Task('Task 2', 'Description 2', 'Low', today);
     const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-2-08');
-
+    task1.isComplete = true;
+    console.log(task1);
     this.todoList.inbox.addTask(task1);
     this.todoList.inbox.addTask(task2);
     this.todoList.inbox.addTask(task3);
