@@ -29,10 +29,14 @@ export default class UI{
     event.preventDefault();
     // Access the form elements directly
     const task = this.getTaskFromInput();
-    console.log(task);
+    this.addTaskToSection(task);
+    this.render();
     // Reset the form for a new entry 
     this.form.reset();
     this.newTaskModal.close();
+  }
+  addTaskToSection(task){
+    this.selectedSection.addTask(task);
   }
   getTaskFromInput(){
     const title = document.getElementById('task-title').value;
@@ -66,7 +70,7 @@ export default class UI{
           <label for='task-dueDate'>Due Date: </label>
           <input type='date' id='task-dueDate' name='dueDate' />
           
-          <input type="radio" id="priority-choice-1" name="priority" value="1" />
+          <input type="radio" id="priority-choice-1" name="priority" value="1" checked/>
           <label for="priority-choice-1">Low</label>
           <input type='radio' id='priority-choice-2' name='priority' value='2' />
           <label for='priority-choice-2'>Medium</label>
@@ -80,12 +84,13 @@ export default class UI{
   }
   render(){
     this.renderSidebar();
-    this.renderContent();
+    if(this.selectedSection === this.todoList.today || this.selectedSection === this.todoList.upcoming){
+      this.renderContentUpcoming();
+    }else{
+      this.renderContent();
+    }
   }
-  renderUpcoming(){
-    this.renderSidebar();
-    this.renderContentUpcoming();
-  }
+
   renderSidebar() {
     const sidebar = document.querySelector('.sidebar-section-container');
     this.clearContent(sidebar);
@@ -131,18 +136,13 @@ export default class UI{
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
     this.selectedSection = section;
-
     if(section === this.todoList.today){
       this.todoList.updateToday();
-      this.renderContentUpcoming();
     }
     else if(section === this.todoList.upcoming){
       this.todoList.updateUpcoming();
-      this.renderContentUpcoming();
     }
-    else{
-      this.render();
-    }
+    this.render();
   }
   // renders the content page
   renderContent() {
@@ -201,17 +201,15 @@ export default class UI{
         const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
         tasksList.appendChild(taskItem);
     });
-    const newTaskBtn = document.createElement('button');
-    newTaskBtn.innerText = 'Add new task';
-    newTaskBtn.classList.add('add-new-task-btn');
 
     mainContentArea.appendChild(header);
     mainContentArea.appendChild(tasksList);
-    mainContentArea.appendChild(newTaskBtn);
   }
   createTaskElementUI(task, section){
     const taskUI = document.createElement('div');
     taskUI.classList.add('task');
+    taskUI.setAttribute('task-id', task.id);
+
     const checkBox = document.createElement('input');
     checkBox.setAttribute('type', 'checkbox');
     checkBox.id = task.id;
@@ -255,18 +253,12 @@ export default class UI{
   }
   deleteTask(task,section){
     section.removeTask(task);
-
     if(this.selectedSection === this.todoList.today){
       this.todoList.updateToday();
-      this.renderContentUpcoming();
-    }
-    else if(this.selectedSection === this.todoList.upcoming){
+    }else if(this.selectedSection === this.todoList.upcoming){
       this.todoList.updateUpcoming();
-      this.renderContentUpcoming();
     }
-    else{
-      this.render();
-    }
+    this.render();
   }
   createContent() {
     const content = document.createElement('div');
