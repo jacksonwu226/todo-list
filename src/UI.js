@@ -10,10 +10,38 @@ export default class UI{
     this.todoList = new TodoList();
     this.selectedSection = this.todoList.inbox;
     this.createTemplate();
-    this.createTestProjects();
-
     this.render();
+    this.cacheDom();
+    this.bindEvents();
     }
+  cacheDom(){
+    this.newTaskModal = document.querySelector('#add-new-task-dialog');
+    this.submitNewTaskBtn = document.querySelector('#submit-new-task-btn');
+    this.cancelNewTaskBtn = document.querySelector('#cancel-new-task-btn');
+    this.form = document.querySelector('.add-new-task-form');
+  }
+  bindEvents(){
+    this.cancelNewTaskBtn.addEventListener('click', event => this.cancelNewTaskSubmission(event));
+    this.submitNewTaskBtn.addEventListener('click', event => this.newTaskSubmission(event));
+  }
+  newTaskSubmission(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+    // Access the form elements directly
+    const task = this.getTaskFromInput();
+    console.log(task);
+    // Reset the form for a new entry 
+    this.form.reset();
+    this.newTaskModal.close();
+  }
+  getTaskFromInput(){
+    const title = document.getElementById('task-title').value;
+    const description = document.getElementById('task-description').value;
+    const dueDate = document.getElementById('task-dueDate').value;
+    const priority = document.querySelector('input[name="priority"]:checked').value;
+
+    return new Task(title, description, priority, dueDate);
+  }
   createTemplate(){
     this.content.innerHTML = `
       <div class='sidebar'>
@@ -23,8 +51,33 @@ export default class UI{
       <div class='section-content'>
       </div>  
     `
+    this.content.innerHTML += this.newTaskTemplate();
     }
   // renders the side bar of the page, should contain all projects
+  newTaskTemplate(){
+    return `<dialog id='add-new-task-dialog'>
+      <div class='modal-container'>
+        <p>Add new task</p>
+        <form class='add-new-task-form'>
+          <label for='task-title'>Title: </label>
+          <input type='text' id='task-title' name='title' placeholder='Title' required/>
+          <label for='task-description'>Description: </label>
+          <input type='text' id='task-description' name='description' placeholder='Description'/>
+          <label for='task-dueDate'>Due Date: </label>
+          <input type='date' id='task-dueDate' name='dueDate' />
+          
+          <input type="radio" id="priority-choice-1" name="priority" value="1" />
+          <label for="priority-choice-1">Low</label>
+          <input type='radio' id='priority-choice-2' name='priority' value='2' />
+          <label for='priority-choice-2'>Medium</label>
+          <input type='radio' id='priority-choice-3' name='priority' value='3'/>
+          <label for='priority-choice-3'>High</label>
+          <button id="submit-new-task-btn" value="default">Submit</button>
+          <button id="cancel-new-task-btn" formmethod="dialog">Cancel</button>
+        </form>
+      </div>
+    </dialog>`;
+  }
   render(){
     this.renderSidebar();
     this.renderContent();
@@ -109,8 +162,15 @@ export default class UI{
     header.appendChild(sectionTitle);
     header.appendChild(taskCount);
     const taskContainer = this.renderTasks(section);
+
+    const newTaskBtn = document.createElement('button');
+    newTaskBtn.classList.add('add-new-task-btn');
+    newTaskBtn.innerText = 'Add new task';
+    newTaskBtn.addEventListener('click', e => this.openModal(e));
+
     mainContentArea.appendChild(header);
     mainContentArea.appendChild(taskContainer);
+    mainContentArea.appendChild(newTaskBtn);
   }
   renderTasks(section){
     const taskContainer = document.createElement('div');
@@ -135,13 +195,19 @@ export default class UI{
     header.appendChild(sectionTitle);
     header.appendChild(taskCount);
 
-    const tasksList = document.createElement('task-container');
+    const tasksList = document.createElement('div');
+    tasksList.classList.add('task-container');
     section.taskContainer.forEach(taskInfo => {
         const taskItem = this.createTaskElementUI(taskInfo.task, taskInfo.section);
         tasksList.appendChild(taskItem);
     });
+    const newTaskBtn = document.createElement('button');
+    newTaskBtn.innerText = 'Add new task';
+    newTaskBtn.classList.add('add-new-task-btn');
+
     mainContentArea.appendChild(header);
     mainContentArea.appendChild(tasksList);
+    mainContentArea.appendChild(newTaskBtn);
   }
   createTaskElementUI(task, section){
     const taskUI = document.createElement('div');
@@ -255,34 +321,6 @@ export default class UI{
     this.todoList.addProject(newProject);
   }
 
-  createNewTaskForm(){
-    const form = document.createElement('form');
-    form.setAttribute('action', '');
-    form.dataset.newProjectForm = true;
-
-    const input = document.createElement('input');
-    input.setAttribute('type','text');
-    input.setAttribute('class', 'new project');
-    input.dataset.newProjectInput = true;
-    input.setAttribute('placeholder', 'new task name');
-    input.setAttribute('aria-label', 'new task name');
-
-    // create button ele
-    const button = document.createElement('button');
-    button.setAttribute('class', 'btn create');
-    button.setAttribute('aria-label', 'create new project');
-    button.textContent = '+';
-
-    form.appendChild(input);
-    form.appendChild(button);
-    this.newProjectForm = form;
-    this.newProjectInput = input;
-
-    this.newProjectForm.addEventListener('submit', (e) => this.newProjectSubmission(e));
-
-    return form;
-  }
-
   newProjectSubmission(event){
     event.preventDefault()
     const projectName = this.newProjectInput.value;
@@ -297,15 +335,12 @@ export default class UI{
     const newProject = new Project(name);
     this.todoList.addProject(newProject);
   }
-
-  createTestProjects() {
-    const today = '2024-03-16'; // 'YYYY-MM-DD' format
-    const task1 = new Task('Task 1', 'Description 1', 'High', today);
-    const task2 = new Task('Task 2', 'Description 2', 'Low', today);
-    const task3 = new Task('Task 2', 'Description 2', 'Low', '2024-3-17');
-    task1.isComplete = true;
-    this.todoList.inbox.addTask(task1);
-    this.todoList.inbox.addTask(task2);
-    this.todoList.inbox.addTask(task3);
+  openModal(event){
+    this.newTaskModal.showModal();
   }
+  cancelNewTaskSubmission(event){
+    event.preventDefault();
+    this.form.reset();
+    this.newTaskModal.close();
+}
 }
