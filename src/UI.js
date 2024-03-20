@@ -82,6 +82,38 @@ export default class UI{
       </div>
     </dialog>`;
   }
+  taskDetailsTemplate(task) {
+    return `
+      <dialog id='task-details-dialog'>
+        <div class='modal-container'>
+          <p>Task details</p>
+          <p>Title: ${task.title}</p>
+          <p>Description: ${task.description}</p>
+          <p>Priority: ${task.priority}</p>
+          <p>Due Date: ${format(toDate(task.dueDate), 'MMMM dd, yyyy')}</p>
+          <button id="close-task-details-btn">Close</button>
+        </div>
+      </dialog>`;
+  }
+
+  // Method to open modal/dialog showing task details
+  openTaskDetailsModal(task) {
+    const taskDetailsModal = this.taskDetailsTemplate(task);
+    this.content.insertAdjacentHTML('beforeend', taskDetailsModal);
+    const closeBtn = document.getElementById('close-task-details-btn');
+    closeBtn.addEventListener('click', () => {
+      this.closeTaskDetailsModal();
+    });
+    const taskDetailsDialog = document.getElementById('task-details-dialog');
+    taskDetailsDialog.showModal();
+  }
+
+  // Method to close the task details modal/dialog
+  closeTaskDetailsModal() {
+    const taskDetailsDialog = document.getElementById('task-details-dialog');
+    taskDetailsDialog.close();
+    taskDetailsDialog.remove();
+  }
   render(){
     this.renderSidebar();
     if(this.selectedSection === this.todoList.today || this.selectedSection === this.todoList.upcoming){
@@ -223,7 +255,13 @@ export default class UI{
     span.classList.add('custom-checkbox');
     label.appendChild(span);
     taskUI.appendChild(label);
-
+  
+    const detailsBtn = document.createElement('button');
+    detailsBtn.textContent = 'Details';
+    detailsBtn.classList.add('task-details-btn');
+    detailsBtn.addEventListener('click', ()=> this.openTaskDetailsModal(task));
+    taskUI.appendChild(detailsBtn);
+    
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'X';
     deleteBtn.classList.add('delete-task-btn');
