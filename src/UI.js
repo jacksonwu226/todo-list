@@ -86,15 +86,15 @@ export default class UI{
     return `
       <dialog id='task-details-dialog'>
         <div class='modal-container'>
-          <p>Task details</p>
-          <p>Title: ${task.title}</p>
-          <p>Description: ${task.description}</p>
-          <p>Priority: ${task.priority}</p>
-          <p>Due Date: ${format(toDate(task.dueDate), 'MMMM dd, yyyy')}</p>
+          <p><span class='task-details-prompt'>Task details</span></p>
+          <p><span class='task-details-label'>Title:</span> ${task.title}</p>
+          <p><span class='task-details-label'>Description:</span> ${task.description}</p>
+          <p><span class='task-details-label'>Priority:</span> ${task.priority}</p>
+          <p><span class='task-details-label'>Due Date:</span> ${format(toDate(task.dueDate), 'MMMM dd, yyyy')}</p>
           <button id="close-task-details-btn">Close</button>
         </div>
       </dialog>`;
-  }
+}
 
   // Method to open modal/dialog showing task details
   openTaskDetailsModal(task) {
@@ -261,7 +261,7 @@ export default class UI{
     detailsBtn.classList.add('task-details-btn');
     detailsBtn.addEventListener('click', ()=> this.openTaskDetailsModal(task));
     taskUI.appendChild(detailsBtn);
-    
+
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'X';
     deleteBtn.classList.add('delete-task-btn');
@@ -372,5 +372,5 @@ export default class UI{
     event.preventDefault();
     this.form.reset();
     this.newTaskModal.close();
-}
+  }
 }
