@@ -22,6 +22,9 @@ class Upcoming {
   get id(){
     return this._id;
   }
+  set id(newID){
+    this._id = newID;
+  }
   clearTasks(){
     this._taskContainer = [];
   }

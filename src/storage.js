@@ -38,25 +38,23 @@ class Storage {
     if (!todoListData) {
       return new TodoList();
     }
-  
+
     const parsedData = JSON.parse(todoListData);
-  
-    const todoList = Object.assign(new TodoList(), parsedData);
-  
-    // Process inbox tasks
-    if (todoList.inbox) {
-      todoList.inbox = Object.assign(new Project(), todoList.inbox);
-      todoList.inbox.tasks = todoList.inbox.tasks.map(
-        task => new Task(task.title, task.description, task.priority, task.dueDate)
-      );
-    }
-  
-    // Process tasks in other projects
-    todoList.projects.forEach(project => {
-      project = Object.assign(new Project(), project);
-      project.tasks = project.tasks.map(
-        task => new Task(task.title, task.description, task.priority, task.dueDate)
-      );
+    const todoList = new TodoList();
+
+    // Reconstruct inbox
+    todoList.inbox = new Project(parsedData._inbox._name);
+    todoList.inbox.tasks = parsedData._inbox._tasks.map(task => {
+      return new Task(task._title, task._description, task._priority, task._dueDate, task._isComplete);
+    });
+
+    // Reconstruct projects
+    todoList.projects = parsedData._projects.map(projectData => {
+      const project = new Project(projectData._name);
+      project.tasks = projectData._tasks.map(task => {
+        return new Task(task._title, task._description, task._priority, task._dueDate, task._isComplete);
+      });
+      return project;
     });
 
     return todoList;

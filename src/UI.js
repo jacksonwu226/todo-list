@@ -14,7 +14,6 @@ export default class UI{
     this.render();
     this.cacheDom();
     this.bindEvents();
-    console.log(this.todoList);
   }
   cacheDom(){
     this.newTaskModal = document.querySelector('#add-new-task-dialog');
@@ -333,7 +332,7 @@ export default class UI{
     checkBox.checked = task.isComplete;
     checkBox.addEventListener('change', () => {
       task.isComplete = checkBox.checked;
-      // this.render();
+      this.saveAndRender();
     });
     taskUI.appendChild(checkBox);
     

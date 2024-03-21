@@ -25,6 +25,9 @@ class Project{
     get id(){
         return this._id;
     }
+    set id(newID){
+        this._id = newID;
+    }
     addTask(newTask){
         this._tasks.push(newTask);
     }

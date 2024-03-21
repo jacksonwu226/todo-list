@@ -2,12 +2,12 @@ import {format} from 'date-fns';
 import {v4 as uuidv4} from 'uuid'
 
 class Task{
-    constructor(title, description, priority, dueDate = 'No due date'){
+    constructor(title, description, priority, dueDate = 'No due date', isComplete=false){
         this._title = title;
         this._description = description;
         this._dueDate = dueDate;
         this._priority = priority;
-        this._isComplete = false;
+        this._isComplete = isComplete;
         this._id = uuidv4();
     }
     get title() {
@@ -48,6 +48,9 @@ class Task{
     }
     get id(){
         return this._id;
+    }
+    set id(newID){
+        this._id = newID;
     }
     formatDate(date){
       if (date === '') {
