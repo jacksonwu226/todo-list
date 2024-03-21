@@ -29,18 +29,20 @@ import TodoList from './todoList'
 // }
 
 class Storage {
-  static saveTodoList(data) {
-    localStorage.setItem('todoList', JSON.stringify(data))
+  static saveTodoList(todoListData) {
+    localStorage.setItem('todoList', JSON.stringify(todoListData))
   }
   static getTodoList() {
-    const todoList = Object.assign(
-      new TodoList(),
-      JSON.parse(localStorage.getItem('todoList'))
-    );
+    const todoListData = localStorage.getItem('todoList');
 
-    if (!todoList)
-      return null;
-
+    if (!todoListData) {
+      return new TodoList();
+    }
+  
+    const parsedData = JSON.parse(todoListData);
+  
+    const todoList = Object.assign(new TodoList(), parsedData);
+  
     // Process inbox tasks
     if (todoList.inbox) {
       todoList.inbox = Object.assign(new Project(), todoList.inbox);
@@ -48,7 +50,7 @@ class Storage {
         task => new Task(task.title, task.description, task.priority, task.dueDate)
       );
     }
-
+  
     // Process tasks in other projects
     todoList.projects.forEach(project => {
       project = Object.assign(new Project(), project);

@@ -1,19 +1,21 @@
-import Task from './task.js'
-import Project from './project.js'
+import Task from './task.js';
+import Project from './project.js';
 import TodoList from './todoList.js';
-import {format, toDate} from 'date-fns'
+import {format, toDate} from 'date-fns';
+import Storage from './storage.js';
 
 export default class UI{
   constructor() {
     this.body = document.body;
     this.content = this.createContent();
-    this.todoList = new TodoList();
+    this.todoList = this.getTodoListStorage();
     this.selectedSection = this.todoList.inbox;
     this.createTemplate();
     this.render();
     this.cacheDom();
     this.bindEvents();
-    }
+    console.log(this.todoList);
+  }
   cacheDom(){
     this.newTaskModal = document.querySelector('#add-new-task-dialog');
     this.submitNewTaskBtn = document.querySelector('#submit-new-task-btn');
@@ -24,13 +26,24 @@ export default class UI{
     this.cancelNewTaskBtn.addEventListener('click', event => this.cancelNewTaskSubmission(event));
     this.submitNewTaskBtn.addEventListener('click', event => this.newTaskSubmission(event));
   }
+  getTodoListStorage(){
+    return Storage.getTodoList();
+  }
+  saveAndRender(){
+    this.saveToStorage();
+    this.render();
+  }
+  saveToStorage(){
+    Storage.saveTodoList(this.todoList);
+  }
   newTaskSubmission(event) {
     // Prevent the default form submission behavior
     event.preventDefault();
     // Access the form elements directly
     const task = this.getTaskFromInput();
     this.addTaskToSection(task);
-    this.render();
+    // this.render();
+    this.saveAndRender();
     // Reset the form for a new entry 
     this.form.reset();
     this.newTaskModal.close();
@@ -159,7 +172,9 @@ export default class UI{
     task.priority = newTask.priority;
     task.isComplete = false;
     this.closeEditTaskModal();
-    this.render();
+    // this.render();
+    this.saveAndRender();
+
 }
   getEditedTaskFromForm() {
     const title = document.getElementById('edit-task-title').value;
@@ -232,7 +247,8 @@ export default class UI{
       this.selectedSection = this.todoList.inbox;
     }
     this.todoList.deleteProject(project);
-    this.render();
+    // this.render();
+    this.saveAndRender();
   }
   // Handles what happens when a section is clicked
   handleSidebarClick(section){
@@ -317,8 +333,7 @@ export default class UI{
     checkBox.checked = task.isComplete;
     checkBox.addEventListener('change', () => {
       task.isComplete = checkBox.checked;
-      // Optionally, you can trigger a re-render of the UI here if needed
-      this.render();
+      // this.render();
     });
     taskUI.appendChild(checkBox);
     
@@ -374,7 +389,8 @@ export default class UI{
     }else if(this.selectedSection === this.todoList.upcoming){
       this.todoList.updateUpcoming();
     }
-    this.render();
+    // this.render();
+    this.saveAndRender();
   }
   createContent() {
     const content = document.createElement('div');
@@ -421,7 +437,8 @@ export default class UI{
 
     if(projectName == null || projectName ==='') return;
     this.createProject(projectName);
-    this.render();
+    // this.render();
+    this.saveAndRender();
     this.newProjectInput.value = '';
   }
   createProject(name){
@@ -429,20 +446,6 @@ export default class UI{
     this.todoList.addProject(newProject);
   }
 
-  newProjectSubmission(event){
-    event.preventDefault()
-    const projectName = this.newProjectInput.value;
-
-    if(projectName == null || projectName ==='') return;
-    this.createProject(projectName);
-    this.selectedSection = this.todoList.projects[this.todoList.projects.length-1];
-    this.render();
-    this.newProjectInput.value = '';
-  }
-  createProject(name){
-    const newProject = new Project(name);
-    this.todoList.addProject(newProject);
-  }
   openNewTaskModal(event){
     this.newTaskModal.showModal();
   }
