@@ -29,7 +29,13 @@ class Task{
         this._priority = newPriority;
     }
     get dueDate(){
-        return this._dueDate;
+      return this._dueDate;
+    }
+    get stylizedDueDate(){
+      if(this._dueDate === '')
+        return 'No Due Date';
+      else
+        return format(this._dueDate, 'MMMM dd, yyyy');
     }
     set dueDate(newDate){
         this._dueDate = this.formatDate(newDate);
@@ -44,13 +50,11 @@ class Task{
         return this._id;
     }
     formatDate(date){
-        if (date === 'No due date'){
-            return date;
-        }
-        else{
-            const dateSplit = date.split('-');
-            return format(new Date(dateSplit[0], dateSplit[1], dateSplit[2]), 'MM/dd/yyyy');
-        }
+      if (date === '') {
+        return date;
+    } else {
+        return format(new Date(date+'T00:00:00'), 'yyyy-MM-dd');
+    }
     }
 }
 
