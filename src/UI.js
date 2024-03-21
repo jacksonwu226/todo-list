@@ -43,7 +43,6 @@ export default class UI{
     const description = document.getElementById('task-description').value;
     const dueDate = document.getElementById('task-dueDate').value;
     const priority = document.querySelector('input[name="priority"]:checked').value;
-
     return new Task(title, description, priority, dueDate);
   }
   createTemplate(){
@@ -90,14 +89,42 @@ export default class UI{
           <p><span class='task-details-label'>Title:</span> ${task.title}</p>
           <p><span class='task-details-label'>Description:</span> ${task.description}</p>
           <p><span class='task-details-label'>Priority:</span> ${task.priority}</p>
-          <p><span class='task-details-label'>Due Date:</span> ${format(toDate(task.dueDate), 'MMMM dd, yyyy')}</p>
+          <p><span class='task-details-label'>Due Date:</span> ${task.stylizedDueDate}</p>
           <button id="close-task-details-btn">Close</button>
         </div>
       </dialog>`;
-}
+  }
+  editTaskTemplate(task) {
+    let formTemplate = `
+      <dialog id='edit-task-dialog'>
+        <div class='modal-container'>
+          <p>Edit Task</p>
+          <form class='edit-task-form'>
+            <label for='edit-task-title'>Title: </label>
+            <input type='text' id='edit-task-title' name='title' placeholder='Title' value='${task.title}' required/>
+            <label for='edit-task-description'>Description: </label>
+            <input type='text' id='edit-task-description' name='description' placeholder='Description' value='${task.description}'/>
+            <label for='edit-task-dueDate'>Due Date: </label>
+            <input type='date' id='edit-task-dueDate' name='dueDate' value='${task.dueDate}' />
+            
+            <input type="radio" id="edit-priority-choice-1" name="priority" value="1" ${task.priority === '1' ? 'checked' : ''}/>
+            <label for="edit-priority-choice-1">Low</label>
+            <input type='radio' id='edit-priority-choice-2' name='priority' value='2' ${task.priority === '2' ? 'checked' : ''}/>
+            <label for='edit-priority-choice-2'>Medium</label>
+            <input type='radio' id='edit-priority-choice-3' name='priority' value='3' ${task.priority === '3' ? 'checked' : ''}/>
+            <label for='edit-priority-choice-3'>High</label>
+            <button id="save-edited-task-btn" value="default">Save Changes</button>
+            <button id="cancel-edit-task-btn" formmethod="dialog">Cancel</button>
+          </form>
+        </div>
+      </dialog>`;
+      
+    return formTemplate;
+  }
 
   // Method to open modal/dialog showing task details
   openTaskDetailsModal(task) {
+    this.closeTaskDetailsModal();
     const taskDetailsModal = this.taskDetailsTemplate(task);
     this.content.insertAdjacentHTML('beforeend', taskDetailsModal);
     const closeBtn = document.getElementById('close-task-details-btn');
@@ -107,12 +134,54 @@ export default class UI{
     const taskDetailsDialog = document.getElementById('task-details-dialog');
     taskDetailsDialog.showModal();
   }
+  // Method to open modal/dialog allowing editing task details
+  openEditTaskModal(task) {
+    this.closeEditTaskModal();
 
+    const editTaskModal = this.editTaskTemplate(task);
+    this.content.insertAdjacentHTML('beforeend', editTaskModal);
+    const saveBtn = document.getElementById('save-edited-task-btn');
+    const closeBtn = document.getElementById('cancel-edit-task-btn');
+    // Pass the task object to the saveEditTask method
+    saveBtn.addEventListener('click', (event) => this.saveEditTask(event, task));
+    closeBtn.addEventListener('click', () => {
+      this.closeEditTaskModal();
+    });
+    const editTaskDialog = document.getElementById('edit-task-dialog')
+    editTaskDialog.showModal();
+  }
+  saveEditTask(event, task) {
+    event.preventDefault();
+    const newTask = this.getEditedTaskFromForm();
+    task.title = newTask.title;
+    task.description = newTask.description;
+    task.dueDate = newTask.dueDate;
+    task.priority = newTask.priority;
+    task.isComplete = false;
+    this.closeEditTaskModal();
+    this.render();
+}
+  getEditedTaskFromForm() {
+    const title = document.getElementById('edit-task-title').value;
+    const description = document.getElementById('edit-task-description').value;
+    const dueDate = document.getElementById('edit-task-dueDate').value;
+    const priority = document.querySelector('input[name="priority"]:checked').value;
+    return {title, description, priority, dueDate};
+}
+  closeEditTaskModal(){
+    const editTaskDialog = document.getElementById('edit-task-dialog');
+    if(editTaskDialog){
+      editTaskDialog.close();
+      editTaskDialog.remove();
+    }
+  }
   // Method to close the task details modal/dialog
   closeTaskDetailsModal() {
     const taskDetailsDialog = document.getElementById('task-details-dialog');
-    taskDetailsDialog.close();
-    taskDetailsDialog.remove();
+    if(taskDetailsDialog){
+      taskDetailsDialog.close();
+      taskDetailsDialog.remove();
+    }
   }
   render(){
     this.renderSidebar();
@@ -198,7 +267,7 @@ export default class UI{
     const newTaskBtn = document.createElement('button');
     newTaskBtn.classList.add('add-new-task-btn');
     newTaskBtn.innerText = 'Add new task';
-    newTaskBtn.addEventListener('click', e => this.openModal(e));
+    newTaskBtn.addEventListener('click', e => this.openNewTaskModal(e));
 
     mainContentArea.appendChild(header);
     mainContentArea.appendChild(taskContainer);
@@ -246,6 +315,11 @@ export default class UI{
     checkBox.setAttribute('type', 'checkbox');
     checkBox.id = task.id;
     checkBox.checked = task.isComplete;
+    checkBox.addEventListener('change', () => {
+      task.isComplete = checkBox.checked;
+      // Optionally, you can trigger a re-render of the UI here if needed
+      this.render();
+    });
     taskUI.appendChild(checkBox);
     
     const label = document.createElement('label');
@@ -262,6 +336,12 @@ export default class UI{
     detailsBtn.addEventListener('click', ()=> this.openTaskDetailsModal(task));
     taskUI.appendChild(detailsBtn);
 
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('edit-task-btn');
+    editBtn.addEventListener('click', () => this.openEditTaskModal(task));
+    taskUI.appendChild(editBtn);
+    
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'X';
     deleteBtn.classList.add('delete-task-btn');
@@ -272,8 +352,6 @@ export default class UI{
   renderTaskCount(tasks){
     const taskCount = document.createElement('p');
     taskCount.classList.add('task-counter');
-    console.log(tasks);
-
     const imcompleteTaskCount = tasks.filter(task => !task.isComplete).length
     const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
     taskCount.innerText = `${imcompleteTaskCount} ${taskString} remaining`;
@@ -365,7 +443,7 @@ export default class UI{
     const newProject = new Project(name);
     this.todoList.addProject(newProject);
   }
-  openModal(event){
+  openNewTaskModal(event){
     this.newTaskModal.showModal();
   }
   cancelNewTaskSubmission(event){
