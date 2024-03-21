@@ -59,7 +59,7 @@ export default class UI{
   }
   createTemplate(){
     this.content.innerHTML = `
-      <h1 class='title>Todo List<h1>
+      <h1 class='title'>Todo List</h1>
       <div class='sidebar'>
         <div class='sidebar-section-container'>
         </div>
