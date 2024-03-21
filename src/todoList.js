@@ -16,6 +16,9 @@ class TodoList{
     get inbox(){
         return this._inbox;
     }
+    set inbox(newInbox){
+      this._inbox = newInbox;
+    }
     get today(){
         return this._today;
     }
