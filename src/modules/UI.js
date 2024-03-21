@@ -7,7 +7,6 @@ import Storage from './storage.js';
 export default class UI{
   constructor() {
     this.body = document.body;
-    this.title = this.createTitle();
     this.content = this.createContent();
     this.todoList = this.getTodoListStorage();
     this.selectedSection = this.todoList.inbox;
@@ -25,13 +24,6 @@ export default class UI{
   bindEvents(){
     this.cancelNewTaskBtn.addEventListener('click', event => this.cancelNewTaskSubmission(event));
     this.submitNewTaskBtn.addEventListener('click', event => this.newTaskSubmission(event));
-  }
-  createTitle(){
-    const title = document.createElement('h1');
-    title.classList.add('title');
-    title.textContent = 'Todo App';
-    this.body.prepend(title);
-    return title;
   }
   getTodoListStorage(){
     return Storage.getTodoList();
@@ -67,6 +59,7 @@ export default class UI{
   }
   createTemplate(){
     this.content.innerHTML = `
+      <h1 class='title>Todo List<h1>
       <div class='sidebar'>
         <div class='sidebar-section-container'>
         </div>
