@@ -172,7 +172,6 @@ export default class UI{
     task.priority = newTask.priority;
     task.isComplete = false;
     this.closeEditTaskModal();
-    // this.render();
     this.saveAndRender();
 
 }
