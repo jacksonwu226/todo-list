@@ -283,10 +283,11 @@ export default class UI{
     newTaskBtn.classList.add('add-new-task-btn');
     newTaskBtn.innerText = 'Add new task';
     newTaskBtn.addEventListener('click', e => this.openNewTaskModal(e));
+    taskContainer.appendChild(newTaskBtn);
 
     mainContentArea.appendChild(header);
     mainContentArea.appendChild(taskContainer);
-    mainContentArea.appendChild(newTaskBtn);
+    // mainContentArea.appendChild(newTaskBtn);
   }
   renderTasks(section){
     const taskContainer = document.createElement('div');
@@ -332,16 +333,17 @@ export default class UI{
     checkBox.checked = task.isComplete;
     checkBox.addEventListener('change', () => {
       task.isComplete = checkBox.checked;
-      this.saveAndRender();
+      this.saveToStorage();
     });
     taskUI.appendChild(checkBox);
     
     const label = document.createElement('label');
     label.setAttribute('for', task.id);
     const span = document.createElement('span');
-    span.innerText = task.title;
     span.classList.add('custom-checkbox');
     label.appendChild(span);
+    const titleTextNode = document.createTextNode(task.title);
+    label.appendChild(titleTextNode);
     taskUI.appendChild(label);
   
     const detailsBtn = document.createElement('button');
