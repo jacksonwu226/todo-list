@@ -120,11 +120,11 @@ export default class UI{
             <label for='edit-task-dueDate'>Due Date: </label>
             <input type='date' id='edit-task-dueDate' name='dueDate' value='${task.dueDate}' />
             
-            <input type="radio" id="edit-priority-choice-1" name="priority" value="1" ${task.priority === '1' ? 'checked' : ''}/>
+            <input type="radio" id="edit-priority-choice-1" name="editPriority" value="1" ${task.priority === '1' ? 'checked' : ''}/>
             <label for="edit-priority-choice-1">Low</label>
-            <input type='radio' id='edit-priority-choice-2' name='priority' value='2' ${task.priority === '2' ? 'checked' : ''}/>
+            <input type='radio' id='edit-priority-choice-2' name='editPriority' value='2' ${task.priority === '2' ? 'checked' : ''}/>
             <label for='edit-priority-choice-2'>Medium</label>
-            <input type='radio' id='edit-priority-choice-3' name='priority' value='3' ${task.priority === '3' ? 'checked' : ''}/>
+            <input type='radio' id='edit-priority-choice-3' name='editPriority' value='3' ${task.priority === '3' ? 'checked' : ''}/>
             <label for='edit-priority-choice-3'>High</label>
             <button id="save-edited-task-btn" value="default">Save Changes</button>
             <button id="cancel-edit-task-btn" formmethod="dialog">Cancel</button>
@@ -179,7 +179,9 @@ export default class UI{
     const title = document.getElementById('edit-task-title').value;
     const description = document.getElementById('edit-task-description').value;
     const dueDate = document.getElementById('edit-task-dueDate').value;
-    const priority = document.querySelector('input[name="priority"]:checked').value;
+    const priorityElement = document.querySelector('input[name="editPriority"]:checked');
+    const priority = priorityElement ? priorityElement.value : ''; // Check if a radio button is checked
+    console.log(priority);
     return {title, description, priority, dueDate};
 }
   closeEditTaskModal(){
@@ -374,7 +376,6 @@ export default class UI{
     }else {
       count = this.getTaskCount(section.tasks);
     }
-    console.log(count);
     const taskString = count === 1 ? 'task' : 'tasks';
     taskCount.innerText = `${count} ${taskString} remaining`;
   }
