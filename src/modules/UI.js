@@ -274,7 +274,7 @@ export default class UI{
 
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
-    const taskCount = this.renderTaskCount(section.tasks);
+    const taskCount = this.createTaskCount(section.tasks);
     header.appendChild(sectionTitle);
     header.appendChild(taskCount);
     const taskContainer = this.renderTasks(section);
@@ -307,7 +307,7 @@ export default class UI{
     header.classList.add('content-header');
     const sectionTitle = document.createElement('h2');
     sectionTitle.textContent = section.name;
-    const taskCount = this.renderTaskCountUpcoming(section.taskContainer);
+    const taskCount = this.createTaskCountUpcoming(section.taskContainer);
     
     header.appendChild(sectionTitle);
     header.appendChild(taskCount);
@@ -333,6 +333,7 @@ export default class UI{
     checkBox.checked = task.isComplete;
     checkBox.addEventListener('change', () => {
       task.isComplete = checkBox.checked;
+      this.renderTaskCount(task, section);
       this.saveToStorage();
     });
     taskUI.appendChild(checkBox);
@@ -365,21 +366,41 @@ export default class UI{
     taskUI.appendChild(deleteBtn);
     return taskUI;
   }
-  renderTaskCount(tasks){
+  renderTaskCount(tasks,section){
+    const taskCount = document.querySelector('.task-counter');
+    let count;
+    if(section === this.todoList.today || section === this.todoList.upcoming){
+      count = this.getUpcomingTaskCount(section.taskContainer);
+    }else {
+      count = this.getTaskCount(section.tasks);
+    }
+    console.log(count);
+    const taskString = count === 1 ? 'task' : 'tasks';
+    taskCount.innerText = `${count} ${taskString} remaining`;
+  }
+  getTaskCount(tasks){
+    const incompleteTaskCount = tasks.filter(task => !task.isComplete).length;
+    return incompleteTaskCount;
+  }
+  getUpcomingTaskCount(taskContainer){
+    const incompleteTaskCount = taskContainer.filter( taskInfo => !taskInfo.task.isComplete).length;
+    return incompleteTaskCount;
+  }
+  createTaskCount(tasks){
     const taskCount = document.createElement('p');
     taskCount.classList.add('task-counter');
-    const imcompleteTaskCount = tasks.filter(task => !task.isComplete).length
-    const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
-    taskCount.innerText = `${imcompleteTaskCount} ${taskString} remaining`;
+    const incompleteTaskCount = tasks.filter(task => !task.isComplete).length
+    const taskString = incompleteTaskCount === 1 ? 'task' : 'tasks';
+    taskCount.innerText = `${incompleteTaskCount} ${taskString} remaining`;
 
     return taskCount;
   }
-  renderTaskCountUpcoming(taskContainer){
+  createTaskCountUpcoming(taskContainer){
     const taskCount = document.createElement('p');
     taskCount.classList.add('task-counter');
-    const imcompleteTaskCount = taskContainer.filter( taskInfo => !taskInfo.task.isComplete).length
-    const taskString = imcompleteTaskCount === 1 ? 'task' : 'tasks';
-    taskCount.innerText = `${imcompleteTaskCount} ${taskString} remaining`;
+    const incompleteTaskCount = taskContainer.filter( taskInfo => !taskInfo.task.isComplete).length
+    const taskString = incompleteTaskCount === 1 ? 'task' : 'tasks';
+    taskCount.innerText = `${incompleteTaskCount} ${taskString} remaining`;
 
     return taskCount;
   }
