@@ -349,23 +349,27 @@ export default class UI{
     label.appendChild(titleTextNode);
     taskUI.appendChild(label);
   
+    const taskBtnContainer = document.createElement('div');
+    taskBtnContainer.classList.add('task-btn-container');
     const detailsBtn = document.createElement('button');
     detailsBtn.textContent = 'Details';
     detailsBtn.classList.add('task-details-btn');
     detailsBtn.addEventListener('click', ()=> this.openTaskDetailsModal(task));
-    taskUI.appendChild(detailsBtn);
+    taskBtnContainer.appendChild(detailsBtn);
 
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Edit';
     editBtn.classList.add('edit-task-btn');
     editBtn.addEventListener('click', () => this.openEditTaskModal(task));
-    taskUI.appendChild(editBtn);
+    taskBtnContainer.appendChild(editBtn);
     
     const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'X';
+    deleteBtn.textContent = 'Delete';
     deleteBtn.classList.add('delete-task-btn');
     deleteBtn.addEventListener("click", () => this.deleteTask(task, section));
-    taskUI.appendChild(deleteBtn);
+    taskBtnContainer.appendChild(deleteBtn);
+
+    taskUI.appendChild(taskBtnContainer);
     return taskUI;
   }
   renderTaskCount(tasks,section){
