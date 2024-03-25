@@ -77,8 +77,6 @@ export default class UI{
         <form class='add-new-task-form'>
           <label for='task-title'>Title: </label>
           <input type='text' id='task-title' name='title' placeholder='Title' required/>
-          <label for='task-description'>Description: </label>
-          <input type='text' id='task-description' name='description' placeholder='Description'/>
           <label for='task-dueDate'>Due Date: </label>
           <input type='date' id='task-dueDate' name='dueDate' />
           
@@ -88,6 +86,8 @@ export default class UI{
           <label for='priority-choice-2'>Medium</label>
           <input type='radio' id='priority-choice-3' name='priority' value='3'/>
           <label for='priority-choice-3'>High</label>
+          <label for='task-description'>Description: </label>
+          <textarea id='task-description' name="description" placeholder='Something about this task...' cols="40" rows="5"></textarea>
           <button id="submit-new-task-btn" value="default">Submit</button>
           <button id="cancel-new-task-btn" formmethod="dialog">Cancel</button>
         </form>
@@ -100,9 +100,9 @@ export default class UI{
         <div class='modal-container'>
           <p><span class='task-details-prompt'>Task details</span></p>
           <p><span class='task-details-label'>Title:</span> ${task.title}</p>
-          <p><span class='task-details-label'>Description:</span> ${task.description}</p>
           <p><span class='task-details-label'>Priority:</span> ${task.priority}</p>
           <p><span class='task-details-label'>Due Date:</span> ${task.stylizedDueDate}</p>
+          <p><span class='task-details-label'>Description:</span> ${task.description}</p>
           <button id="close-task-details-btn">Close</button>
         </div>
       </dialog>`;
