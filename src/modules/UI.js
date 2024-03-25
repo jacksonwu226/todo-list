@@ -69,31 +69,37 @@ export default class UI{
     `
     this.content.innerHTML += this.newTaskTemplate();
     }
-  // renders the side bar of the page, should contain all projects
-  newTaskTemplate(){
-    return `<dialog id='add-new-task-dialog'>
-      <div class='modal-container'>
-        <p 'modal-prompt'>Add new task</p>
-        <form class='add-new-task-form'>
-          <label for='task-title'>Title: </label>
-          <input type='text' id='task-title' name='title' placeholder='Title' required/>
-          <label for='task-dueDate'>Due Date: </label>
-          <input type='date' id='task-dueDate' name='dueDate' />
-          
-          <input type="radio" id="priority-choice-1" name="priority" value="1" checked/>
-          <label for="priority-choice-1">Low</label>
-          <input type='radio' id='priority-choice-2' name='priority' value='2' />
-          <label for='priority-choice-2'>Medium</label>
-          <input type='radio' id='priority-choice-3' name='priority' value='3'/>
-          <label for='priority-choice-3'>High</label>
-          <label for='task-description'>Description: </label>
-          <textarea id='task-description' name="description" placeholder='Something about this task...' cols="40" rows="5"></textarea>
-          <button id="submit-new-task-btn" value="default">Submit</button>
-          <button id="cancel-new-task-btn" formmethod="dialog">Cancel</button>
-        </form>
-      </div>
-    </dialog>`;
-  }
+    newTaskTemplate(){
+      return `<dialog id='add-new-task-dialog'>
+        <div class='modal-container'>
+          <p class='modal-prompt'>Add new task</p>
+          <form class='add-new-task-form'>
+            <label for='task-title'>Title: </label>
+            <input type='text' id='task-title' name='title' placeholder='Title' required/>
+            <label for='task-dueDate'>Due Date: </label>
+            <input type='date' id='task-dueDate' name='dueDate' />
+            
+            <legend>Priority</legend>
+            <div class='priority-radio'>
+              <input type="radio" id="priority-choice-1" name="priority" value="1" checked/>
+              <label for="priority-choice-1">Low</label>
+              <input type='radio' id='priority-choice-2' name='priority' value='2' />
+              <label for='priority-choice-2'>Medium</label>
+              <input type='radio' id='priority-choice-3' name='priority' value='3'/>
+              <label for='priority-choice-3'>High</label>
+            </div>
+            
+            <label for='task-description'>Description: </label>
+            <textarea id='task-description' name="description" placeholder='Something about this task...' cols="40" rows="5"></textarea>
+            
+            <div class='modal-buttons'>
+              <button id="submit-new-task-btn" value="default">Submit</button>
+              <button id="cancel-new-task-btn" formmethod="dialog">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </dialog>`;
+    }
   taskDetailsTemplate(task) {
     return `
       <dialog id='task-details-dialog'>
