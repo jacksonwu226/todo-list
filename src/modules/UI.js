@@ -73,7 +73,7 @@ export default class UI{
   newTaskTemplate(){
     return `<dialog id='add-new-task-dialog'>
       <div class='modal-container'>
-        <p>Add new task</p>
+        <p 'modal-prompt'>Add new task</p>
         <form class='add-new-task-form'>
           <label for='task-title'>Title: </label>
           <input type='text' id='task-title' name='title' placeholder='Title' required/>
@@ -98,7 +98,7 @@ export default class UI{
     return `
       <dialog id='task-details-dialog'>
         <div class='modal-container'>
-          <p><span class='task-details-prompt'>Task details</span></p>
+          <h1 class='task-details-prompt'> Task Details</h1>
           <p><span class='task-details-label'>Title:</span> ${task.title}</p>
           <p><span class='task-details-label'>Priority:</span> ${task.priority}</p>
           <p><span class='task-details-label'>Due Date:</span> ${task.stylizedDueDate}</p>
@@ -111,23 +111,28 @@ export default class UI{
     let formTemplate = `
       <dialog id='edit-task-dialog'>
         <div class='modal-container'>
-          <p>Edit Task</p>
+          <p class='modal-prompt'>Edit Task</p>
           <form class='edit-task-form'>
             <label for='edit-task-title'>Title: </label>
             <input type='text' id='edit-task-title' name='title' placeholder='Title' value='${task.title}' required/>
-            <label for='edit-task-description'>Description: </label>
-            <input type='text' id='edit-task-description' name='description' placeholder='Description' value='${task.description}'/>
             <label for='edit-task-dueDate'>Due Date: </label>
             <input type='date' id='edit-task-dueDate' name='dueDate' value='${task.dueDate}' />
             
-            <input type="radio" id="edit-priority-choice-1" name="editPriority" value="1" ${task.priority === '1' ? 'checked' : ''}/>
-            <label for="edit-priority-choice-1">Low</label>
-            <input type='radio' id='edit-priority-choice-2' name='editPriority' value='2' ${task.priority === '2' ? 'checked' : ''}/>
-            <label for='edit-priority-choice-2'>Medium</label>
-            <input type='radio' id='edit-priority-choice-3' name='editPriority' value='3' ${task.priority === '3' ? 'checked' : ''}/>
-            <label for='edit-priority-choice-3'>High</label>
-            <button id="save-edited-task-btn" value="default">Save Changes</button>
-            <button id="cancel-edit-task-btn" formmethod="dialog">Cancel</button>
+            <legend>Priority</legend>
+            <div class='priority-radio'>
+              <input type="radio" id="edit-priority-choice-1" name="editPriority" value="1" ${task.priority === '1' ? 'checked' : ''}/>
+              <label for="edit-priority-choice-1">Low</label>
+              <input type='radio' id='edit-priority-choice-2' name='editPriority' value='2' ${task.priority === '2' ? 'checked' : ''}/>
+              <label for='edit-priority-choice-2'>Medium</label>
+              <input type='radio' id='edit-priority-choice-3' name='editPriority' value='3' ${task.priority === '3' ? 'checked' : ''}/>
+              <label for='edit-priority-choice-3'>High</label>
+            </div>
+            <label for='edit-task-description'>Description: </label>
+            <textarea id='edit-task-description' name="description"cols="40" rows="5">${task.description}</textarea>
+            <div class='modal-buttons'>
+              <button id="save-edited-task-btn" value="default">Save Changes</button>
+              <button id="cancel-edit-task-btn" formmethod="dialog">Cancel</button>
+            </div>
           </form>
         </div>
       </dialog>`;

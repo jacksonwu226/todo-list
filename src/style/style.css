@@ -267,3 +267,107 @@ form[data-new-project-form="true"]{
 .task:hover .task-btn-container{
   opacity: 1;
 }
+
+/* Modal styles */
+dialog {
+    background: var(--clr-light-2);
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--clr-light-3);
+    border-radius: 1rem;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.task-details-prompt {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-container {
+    display: grid;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    gap: 0.5rem;
+    display: grid;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+}
+#close-task-details-btn{
+    justify-self: center;
+    width: 90%;
+}
+.modal-container .task-details-label {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+.modal-container .task-details-label {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+.modal-container label{
+    font-weight: bold;
+    margin-top: 0.3rem;
+}
+.modal-prompt{
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.modal-container input[type='text'],
+.modal-container input[type='date'],
+.modal-container textarea {
+    font-size: 1.2rem;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.3rem;
+}
+
+.modal-container input[type='radio'] {
+    margin-right: 0.5rem;
+}
+
+.modal-container button {
+    cursor: pointer;
+    background-color: var(--clr-primary);
+    color: white;
+    border: none;
+    border-radius: 0.3rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.modal-container button:hover {
+    background-color: var(--clr-light-3);
+}
+
+#cancel-new-task-btn,
+#cancel-edit-task-btn {
+    background-color: var(--clr-warning); /* Change color for cancel button */
+}
+
+/* Cancel button hover */
+#cancel-new-task-btn:hover,
+#cancel-edit-task-btn:hover {
+    background-color: rgb(169, 0, 0); /* Change color on hover */
+}
+form{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+}
+legend{
+    font-weight: bold;
+}
+.modal-buttons{
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: end;
+}
