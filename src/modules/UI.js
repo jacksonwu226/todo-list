@@ -36,10 +36,13 @@ export default class UI{
     Storage.saveTodoList(this.todoList);
   }
   newTaskSubmission(event) {
-    // Prevent the default form submission behavior
-    event.preventDefault();
     // Access the form elements directly
     const task = this.getTaskFromInput();
+    if(task.title == '' || task.title == null){
+      return;
+    }
+    // Prevent the default form submission behavior
+    event.preventDefault();
     this.addTaskToSection(task);
     // this.render();
     this.saveAndRender();
@@ -51,7 +54,7 @@ export default class UI{
     this.selectedSection.addTask(task);
   }
   getTaskFromInput(){
-    const title = document.getElementById('task-title').value;
+    const title = document.getElementById('task-title').value.trim();
     const description = document.getElementById('task-description').value;
     const dueDate = document.getElementById('task-dueDate').value;
     const priority = document.querySelector('input[name="priority"]:checked').value;
@@ -75,7 +78,8 @@ export default class UI{
           <p class='modal-prompt'>Add new task</p>
           <form class='add-new-task-form'>
             <label for='task-title'>Title: </label>
-            <input type='text' id='task-title' name='title' placeholder='Title' required/>
+            <input type='text' id='task-title' name='title' placeholder='Title' required pattern=".*\S+.*" 
+            title="Title must contain at least one non-whitespace character"/>
             <label for='task-dueDate'>Due Date: </label>
             <input type='date' id='task-dueDate' name='dueDate' />
             
@@ -120,7 +124,8 @@ export default class UI{
           <p class='modal-prompt'>Edit Task</p>
           <form class='edit-task-form'>
             <label for='edit-task-title'>Title: </label>
-            <input type='text' id='edit-task-title' name='title' placeholder='Title' value='${task.title}' required/>
+            <input type='text' id='edit-task-title' name='title' placeholder='Title' value='${task.title}' required pattern=".*\S+.*" 
+            title="Title must contain at least one non-whitespace character"/>
             <label for='edit-task-dueDate'>Due Date: </label>
             <input type='date' id='edit-task-dueDate' name='dueDate' value='${task.dueDate}' />
             
@@ -175,8 +180,11 @@ export default class UI{
     editTaskDialog.showModal();
   }
   saveEditTask(event, task) {
-    event.preventDefault();
     const newTask = this.getEditedTaskFromForm();
+    if(newTask.title == '' || newTask.title == null){
+      return;
+    }
+    event.preventDefault();
     task.title = newTask.title;
     task.description = newTask.description;
     task.dueDate = newTask.dueDate;
@@ -187,12 +195,11 @@ export default class UI{
 
 }
   getEditedTaskFromForm() {
-    const title = document.getElementById('edit-task-title').value;
+    const title = document.getElementById('edit-task-title').value.trim();
     const description = document.getElementById('edit-task-description').value;
     const dueDate = document.getElementById('edit-task-dueDate').value;
     const priorityElement = document.querySelector('input[name="editPriority"]:checked');
     const priority = priorityElement ? priorityElement.value : ''; // Check if a radio button is checked
-    console.log(priority);
     return {title, description, priority, dueDate};
 }
   closeEditTaskModal(){
