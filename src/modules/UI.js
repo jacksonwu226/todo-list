@@ -106,7 +106,7 @@ export default class UI{
         <div class='modal-container'>
           <h1 class='task-details-prompt'> Task Details</h1>
           <p><span class='task-details-label'>Title:</span> ${task.title}</p>
-          <p><span class='task-details-label'>Priority:</span> ${task.priority}</p>
+          <p><span class='task-details-label'>Priority:</span> ${this.getPriorityText(task.priority)}</p>
           <p><span class='task-details-label'>Due Date:</span> ${task.stylizedDueDate}</p>
           <p><span class='task-details-label'>Description:</span> ${task.description}</p>
           <button id="close-task-details-btn">Close</button>
@@ -491,5 +491,23 @@ export default class UI{
     event.preventDefault();
     this.form.reset();
     this.newTaskModal.close();
+  }
+  getPriorityText(val){
+    let text;
+    val = parseInt(val);
+    switch(val){
+      case 1:
+        text = 'Low';
+        break;
+      case 2:
+        text = 'Medium';
+        break;
+      case 3:
+        text = 'High';
+        break;
+      default:
+        text = 'None';
+    }
+    return text;
   }
 }
